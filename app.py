@@ -100,6 +100,10 @@ def ideepcolor():
     
     return send_file(io, mimetype=f'image/{file.content_type.split("/")[-1]}')
 
+@app.route('/test_imgs/<file_path>')
+def get_test_image(file_path: str):
+  return send_file('./test_imgs/' + file_path)
+
 @app.route('/', methods=['GET'])
 def main():
     return render_template('index.html')
