@@ -1,0 +1,71 @@
+openapi: '3.0.2'
+info:
+  title: interactive-deep-colorization Ainize API Swagger
+  description: interactive-deep-colorization Ainize API Documentation
+  version: '1.0'
+  license:
+    name: MIT License
+    url: https://github.com/dev2l0per/interactive-deep-colorization/blob/master/LICENSE
+  contact:
+    name: Ainizer - JungHyo Yang
+    email: z-_-z1-@naver.com
+
+servers:
+  - url: https://ainize-interactive-deep-colorization-dev2l0per.endpoint.ainize.ai
+
+paths:
+  /ideepcolor:
+    post:
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                color:
+                  type: string
+                positionX:
+                  type: integer
+                positionY:
+                  type: integer
+            encoding:
+              file:
+                contentType: image/png, image/jpg, image/jpeg
+      responses:
+        '200':
+          description: success
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /test_imgs/{file_path}:
+    get:
+      parameters:
+        - in: path
+          name: file_path
+          required: true
+          schema:
+            type: string
+            enum: [balls_gray.JPEG, bird_gray.jpg, mortar_pestle.jpg, park.jpg, parrot.jpg]
+      responses:
+        '200':
+          description: success
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+  /health:
+    get:
+      responses:
+        '200':
+          description: ok
