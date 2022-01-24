@@ -16,28 +16,28 @@ colorModel.prep_net(path='./models/pytorch/caffemodel.pth')
 
 app = Flask(__name__)
 
-requests_queue = Queue()
+requestsQueue = Queue()
 BATCH_SIZE = 1
 CHECK_INTERVAL = 0.1
 
 def handle_requests_by_batch():
     while True:
-        requests_batch = []
-        while not (len(requests_batch) >= BATCH_SIZE):
+        requestsBatch = []
+        while not (len(requestsBatch) >= BATCH_SIZE):
             try:
-                requests_batch.append(requests_queue.get(timeout=CHECK_INTERVAL))
+                requestsBatch.append(requestsQueue.get(timeout=CHECK_INTERVAL))
             except Empty:
                 continue
 
-            for request in requests_batch:
+            for request in requestsBatch:
                 request['output'] = run(request['input'][0], request['input'][1], request['input'][2])
 
 threading.Thread(target=handle_requests_by_batch).start()
 
-def put_point(input_ab, mask, loc, p, val):
-    input_ab[:, loc[0] - p: loc[0] + p + 1, loc[1] - p : loc[1] + p + 1] = np.array(val)[:, np.newaxis, np.newaxis]
+def put_point(inputAb, mask, loc, p, val):
+    inputAb[:, loc[0] - p: loc[0] + p + 1, loc[1] - p : loc[1] + p + 1] = np.array(val)[:, np.newaxis, np.newaxis]
     mask[:, loc[0] - p : loc[0] + p + 1, loc[1] - p : loc[1] + p + 1] = 1
-    return (input_ab, mask)
+    return (inputAb, mask)
 
 def run(file, labArr, position):
     try:
@@ -50,13 +50,13 @@ def run(file, labArr, position):
 
         colorModel.load_image(tempFilePath)
 
-        input_ab = np.zeros((2, 256, 256))
+        inputAb = np.zeros((2, 256, 256))
         mask = np.zeros((1, 256, 256))
 
-        (input_ab, mask) = put_point(input_ab, mask, position, 3, [labArr[1], labArr[2]])
-        colorModel.net_forward(input_ab, mask)
-        img_out_fullres = colorModel.get_img_fullres()
-        pilImage = Image.fromarray(np.uint8(img_out_fullres)).convert('RGB')
+        (inputAb, mask) = put_point(inputAb, mask, position, 3, [labArr[1], labArr[2]])
+        colorModel.net_forward(inputAb, mask)
+        imgOutFullRes = colorModel.get_img_fullres()
+        pilImage = Image.fromarray(np.uint8(imgOutFullRes)).convert('RGB')
         result = BytesIO()
         pilImage.save(result, format=file.content_type.split("/")[-1])
         result.seek(0)
@@ -68,7 +68,7 @@ def run(file, labArr, position):
 
 @app.route('/ideepcolor', methods=['POST'])
 def ideepcolor():
-    if requests_queue.qsize() > BATCH_SIZE:
+    if requestsQueue.qsize() > BATCH_SIZE:
         return Response('Too Many Requests', status=429)
 
     try:
@@ -89,7 +89,7 @@ def ideepcolor():
         'input': [file, labArr, position]
     }
 
-    requests_queue.put(req)
+    requestsQueue.put(req)
 
     while 'output' not in req:
         time.sleep(CHECK_INTERVAL)
