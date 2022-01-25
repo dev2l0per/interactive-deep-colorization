@@ -310,6 +310,8 @@
                 let fileSelect = document.getElementById('file-upload');
 
                 fileSelect.addEventListener('change', fileSelectHandler, false);
+                canvas.addEventListener('mousedown', listener);
+                colorWheel.on('color:change', colorToCanvas);
             }
 
             function parseFile(file) {
@@ -342,8 +344,6 @@
                 Init();
             }
         }
-        canvas.addEventListener('mousedown', listener);
-        colorWheel.on('color:change', colorToCanvas);
         readyToUpload();
     </script>
 </body>
