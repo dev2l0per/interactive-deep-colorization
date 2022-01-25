@@ -213,15 +213,12 @@
             X: -1,
             Y: -1,
         };
+        let currentColor = colorWheel.color.hexString;
 
         const canvasImg = new Image();
         canvasImg.onload = () => {
             ctx.drawImage(canvasImg, 0, 0, 256, 256);
         }
-
-        colorWheel.on('color:change', (color, changes) => {
-            ctx.fillStyle = color.hexString;
-        });
 
         function getPosition(event) {
             const x = event.offsetX;
@@ -241,12 +238,32 @@
             }
         }
 
+        function colorChangeBlock() {
+            colorWheel.color.hexString = currentColor;
+        }
+
+        function colorToCanvas(color, changes) {
+            currentColor = color.hexString;
+            ctx.fillStyle = color.hexString;
+            if (pos.drawable == true) {
+                submit({
+                    X: pos.X,
+                    Y: pos.Y
+                });
+            }
+        }
+
         function submit(coors) {
             const formData = new FormData();
             formData.append('image', document.querySelector('#file-upload').files[0]);
             formData.append('color', ctx.fillStyle);
             formData.append('positionX', String(coors.X));
             formData.append('positionY', String(coors.Y));
+
+            canvas.removeEventListener('mousedown', listener);
+            colorWheel.deferredEmit('input');
+            colorWheel.off('color:change', colorToCanvas)
+            colorWheel.on('color:change', colorChangeBlock);
 
             fetch("/ideepcolor", {
                     method: 'POST',
@@ -264,6 +281,9 @@
                     const url = URL.createObjectURL(response);
 
                     document.querySelector('#resultColorization').src = url;
+                    canvas.addEventListener('mousedown', listener);
+                    colorWheel.off('color:change', colorChangeBlock);
+                    colorWheel.on('color:change', colorToCanvas);
                 }).catch((e) => {
                     alert(e);
                 });
@@ -318,12 +338,12 @@
                 }
             }
 
-
             if (window.File && window.FileList && window.FileReader) {
                 Init();
             }
         }
         canvas.addEventListener('mousedown', listener);
+        colorWheel.on('color:change', colorToCanvas);
         readyToUpload();
     </script>
 </body>
