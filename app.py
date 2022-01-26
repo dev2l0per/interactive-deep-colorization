@@ -4,6 +4,7 @@ from flask import (
     Flask, send_file, request, Response, render_template,
 )
 
+import torch
 from data import colorize_image as CI
 from skimage import color as skiColor
 import numpy as np
@@ -12,7 +13,9 @@ from PIL import Image, ImageColor
 
 colorModel = CI.ColorizeImageTorch(Xd=256)
 
-colorModel.prep_net(path='./models/pytorch/caffemodel.pth')
+gpu_id = 0 if torch.cuda.is_available() else None
+
+colorModel.prep_net(gpu_id=gpu_id, path='./models/pytorch/caffemodel.pth')
 
 app = Flask(__name__)
 
