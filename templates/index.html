@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@jaames/iro"></script>
+    <title>IDeepColor</title>
+    <style>
+        .uploader {
+            display: block;
+            clear: both;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .uploader>label {
+            float: left;
+            clear: both;
+            width: 100%;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            background: #fff;
+            border-radius: 7px;
+            border: 3px solid #eee;
+            transition: all .2s ease;
+            user-select: none;
+            height: 100%;
+        }
+        
+        .uploader>label:hover {
+            border-color: #454cad;
+        }
+        
+        .uploader>label .hover {
+            border: 3px solid #454cad;
+            box-shadow: inset 0 0 0 6px #eee;
+        }
+        
+        .uploader #start {
+            float: left;
+            clear: both;
+            width: 100%;
+        }
+        
+        .uploader #start.hidden {
+            display: none;
+        }
+        
+        .uploader #start>i.fa {
+            font-size: 50px;
+            margin-bottom: 1rem;
+            transition: all .2s ease-in-out;
+        }
+        
+        .uploader div {
+            margin: 0 0 0.5rem 0;
+            color: #5f6982;
+        }
+        
+        .uploader #file-image {
+            display: inline;
+            width: 256px;
+            height: 256px;
+        }
+        
+        .uploader #file-image.hidden {
+            display: none;
+        }
+        
+        .uploader #canvas.hidden {
+            display: none;
+        }
+        
+        .uploader #notimage {
+            display: block;
+            float: left;
+            clear: both;
+            width: 100%;
+        }
+        
+        .uploader #notimage.hidden {
+            display: none;
+        }
+        
+        .uploader input[type="file"] {
+            display: none;
+        }
+        
+        .uploader .btn {
+            display: inline-block;
+            margin: .5rem .5rem 1rem .5rem;
+            clear: both;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            text-transform: initial;
+            border: none;
+            border-radius: .2rem;
+            outline: none;
+            padding: 0 1rem;
+            height: 36px;
+            line-height: 36px;
+            color: #fff;
+            transition: all 0.2s ease-in-out;
+            box-sizing: border-box;
+            background: #454cad;
+            border-color: #454cad;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <header class="p-3 bg-dark text-white">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                    <a herf="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                        <h4>IDeepColor</h4>
+                    </a>
+                </div>
+            </div>
+        </header>
+        <div class="container">
+            <div class="container" style="margin-top: 20px;">
+                <h3 style="margin-bottom: 20px;">How to use ?</h3>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        1. Upload Your GrayScale Picture
+                    </li>
+                    <li class="list-group-item">
+                        2. Choose a Color
+                    </li>
+                    <li class="list-group-item">
+                        3. Click on a part of the Image
+                    </li>
+                </ul>
+            </div>
+            <div class="container" style="margin-top: 20px;">
+                <ul class="list-group list-group-horizontal-lg">
+                    <li class="list-group-item flex-fill"><a class="btn btn-primary" href="/test_imgs/balls_gray.JPEG" target="_blank">Example Image 1</a></li>
+                    <li class="list-group-item flex-fill"><a class="btn btn-primary" href="/test_imgs/bird_gray.jpg" target="_blank">Example Image 2</a></li>
+                    <li class="list-group-item flex-fill"><a class="btn btn-primary" href="/test_imgs/mortar_pestle.jpg" target="_blank">Example Image 3</a></li>
+                    <li class="list-group-item flex-fill"><a class="btn btn-primary" href="/test_imgs/park.jpg" target="_blank">Example Image 4</a></li>
+                    <li class="list-group-item flex-fill"><a class="btn btn-primary" href="/test_imgs/parrot.jpg" target="_blank">Example Image 5</a></li>
+                </ul>
+            </div>
+            <div class="container" style="display: flex; justify-content: center; margin-top: 20px;">
+                <form id="file-upload-form" class="uploader" style="margin-right: 5%">
+                    <input id="file-upload" type="file" name="fileUpload" accept="image/*" />
+                    <label style="display: flex; align-items: center;">
+                        <canvas id="canvas" width="256" height="256" class="hidden"></canvas>
+                        <div id="start">
+                            <i class="fa fa-download" aria-hidden="true"></i>
+                            <div id="notimage" class="hidden">Please select an image</div>
+                            <label for="file-upload">
+                                <span id="file-upload-btn" class="btn btn-primary">Select a file</span>
+                              </label>
+            </div>
+            </label>
+            </form>
+            <div style="height:300px;">
+                <div class="wheel" id="colorWheelDemo"></div>
+            </div>
+            <button class="btn btn-primary" onclick="reset();" style="height: 40px; margin-top: auto; margin-left: 10px;">Reset</button>
+        </div>
+        <div class="container" style="text-align: center; margin-top: 20px;">
+            <img src="" id="resultColorization" />
+        </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    </script>
+    <script>
+        const colorWheel = new iro.ColorPicker('#colorWheelDemo', {
+            layout: [{
+                component: iro.ui.Wheel,
+                options: {
+                    wheelLightness: true,
+                    wheelAngle: 0,
+                    wheelDirection: "anticlockwise",
+                },
+            }, {
+                component: iro.ui.Slider,
+                options: {
+                    sliderType: 'hue',
+                    activeIndex: 1,
+                }
+            }, {
+                component: iro.ui.Slider,
+                options: {
+                    sliderType: 'saturation',
+                    activeIndex: 1,
+                }
+            }, {
+                component: iro.ui.Slider,
+                options: {
+                    sliderType: 'value',
+                    activeIndex: 1,
+                }
+            }, ],
+            layoutDirection: 'horizontal',
+            display: 'flex',
+        });
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const pos = {
+            drawable: false,
+            X: -1,
+            Y: -1,
+        };
+        let currentColor = colorWheel.color.hexString;
+
+        const canvasImg = new Image();
+        canvasImg.onload = () => {
+            ctx.drawImage(canvasImg, 0, 0, 256, 256);
+        }
+
+        function getPosition(event) {
+            const x = event.offsetX;
+            const y = event.offsetY;
+
+            return {
+                X: x,
+                Y: y
+            };
+        }
+
+        function listener(event) {
+            switch (event.type) {
+                case 'mousedown':
+                    draw(event);
+                    break;
+            }
+        }
+
+        function colorChangeBlock() {
+            colorWheel.color.hexString = currentColor;
+        }
+
+        function colorToCanvas(color, changes) {
+            currentColor = color.hexString;
+            ctx.fillStyle = color.hexString;
+            if (pos.drawable == true) {
+                submit({
+                    X: pos.X,
+                    Y: pos.Y
+                });
+            }
+        }
+
+        function submit(coors) {
+            const formData = new FormData();
+            formData.append('image', document.querySelector('#file-upload').files[0]);
+            formData.append('color', ctx.fillStyle);
+            formData.append('positionX', String(coors.X));
+            formData.append('positionY', String(coors.Y));
+
+            canvas.removeEventListener('mousedown', listener);
+            colorWheel.deferredEmit('input');
+            colorWheel.off('color:change', colorToCanvas)
+            colorWheel.on('color:change', colorChangeBlock);
+
+            fetch("/ideepcolor", {
+                    method: 'POST',
+                    body: formData,
+                }).then((response) => {
+                    if (response.status == 200) {
+                        return response;
+                    } else if (response.status == 429) {
+                        throw Error('Too May Request');
+                    } else {
+                        throw Error('Server Error');
+                    }
+                }).then((response) => response.blob())
+                .then((response) => {
+                    const url = URL.createObjectURL(response);
+
+                    document.querySelector('#resultColorization').src = url;
+                    canvas.addEventListener('mousedown', listener);
+                    colorWheel.off('color:change', colorChangeBlock);
+                    colorWheel.on('color:change', colorToCanvas);
+                }).catch((e) => {
+                    alert(e);
+                });
+        }
+
+        function draw(event) {
+            const coors = getPosition(event);
+
+            if (pos.drawable == true) {
+                ctx.drawImage(canvasImg, 0, 0, 256, 256);
+            }
+
+            ctx.fillRect(coors.X, coors.Y, 7, 7);
+            pos.X = coors.X;
+            pos.Y = coors.Y;
+            pos.drawable = true;
+
+            submit(coors);
+        }
+
+        function reset() {
+            document.getElementById('canvas').classList.add("hidden");
+            document.getElementById('notimage').classList.remove("hidden");
+            document.getElementById('start').classList.remove("hidden");
+            document.getElementById("file-upload-form").reset();
+            canvasImg.src = "";
+            pos.X = -1;
+            pos.Y = -1;
+            pos.drawable = false;
+            colorWheel.reset();
+            currentColor = colorWheel.color.hexString;
+        }
+
+        function readyToUpload() {
+            function Init() {
+                let fileSelect = document.getElementById('file-upload');
+
+                fileSelect.addEventListener('change', fileSelectHandler, false);
+                canvas.addEventListener('mousedown', listener);
+                colorWheel.on('color:change', colorToCanvas);
+            }
+
+            function parseFile(file) {
+                const imageName = file.name;
+                const isGood = (/\.(?=gif|jpg|png|jpeg)/gi).test(imageName);
+
+                if (isGood) {
+                    document.getElementById('start').classList.add("hidden");
+                    document.getElementById('notimage').classList.add("hidden");
+                    document.getElementById('canvas').classList.remove("hidden");
+                    canvasImg.src = URL.createObjectURL(file);
+                } else {
+                    document.getElementById('canvas').classList.add("hidden");
+                    document.getElementById('notimage').classList.remove("hidden");
+                    document.getElementById('start').classList.remove("hidden");
+                    document.getElementById("file-upload-form").reset();
+                }
+            }
+
+            function fileSelectHandler(e) {
+                let files = e.target.files || e.dataTransfer.files;
+                e.stopPropagation();
+                e.preventDefault();
+                for (let i = 0, f; f = files[i]; i++) {
+                    parseFile(f);
+                }
+            }
+
+            if (window.File && window.FileList && window.FileReader) {
+                Init();
+            }
+        }
+        readyToUpload();
+    </script>
+</body>
+
+</html>

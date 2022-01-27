@@ -1,8 +1,11 @@
 
 # Interactive Deep Colorization
 
+[![Run on Ainize](https://ainize.herokuapp.com/static/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=https://github.com/dev2l0per/interactive-deep-colorization)
+
 [Project Page](https://richzhang.github.io/InteractiveColorization) | [Paper](https://arxiv.org/abs/1705.02999) | [Demo Video](https://youtu.be/eL5ilZgM89Q) | [SIGGRAPH Talk](https://www.youtube.com/watch?v=rp5LUSbdsys)
 <img src='imgs/demo.gif' width=600>  
+
 
 
 <b>04/10/2020 Update</b>: [@mabdelhack](mabdelhack) provided a windows installation guide for the PyTorch model in Python 3.6. Check out the Windows [branch](https://github.com/junyanz/interactive-deep-colorization/tree/windows) for the guide.
