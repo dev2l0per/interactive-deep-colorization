@@ -64,7 +64,7 @@ paths:
               schema:
                 type: string
                 format: binary
-  /health:
+  /healthz:
     get:
       responses:
         '200':
