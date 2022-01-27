@@ -165,6 +165,7 @@
             <div style="height:300px;">
                 <div class="wheel" id="colorWheelDemo"></div>
             </div>
+            <button class="btn btn-primary" onclick="reset();" style="height: 40px; margin-top: auto; margin-left: 10px;">Reset</button>
         </div>
         <div class="container" style="text-align: center; margin-top: 20px;">
             <img src="" id="resultColorization" />
@@ -304,6 +305,18 @@
             submit(coors);
         }
 
+        function reset() {
+            document.getElementById('canvas').classList.add("hidden");
+            document.getElementById('notimage').classList.remove("hidden");
+            document.getElementById('start').classList.remove("hidden");
+            document.getElementById("file-upload-form").reset();
+            canvasImg.src = "";
+            pos.X = -1;
+            pos.Y = -1;
+            pos.drawable = false;
+            colorWheel.reset();
+            currentColor = colorWheel.color.hexString;
+        }
 
         function readyToUpload() {
             function Init() {
